@@ -18,6 +18,9 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     
     let database = DatabaseHandler.shared
     
+    // Reference to managed object context
+    let context = (UIApplication.shared.delegate as! AppDelegate).persistentContainer.viewContext
+    
     //Hvis API'et blir laster riktig..
     
     override func viewDidLoad() {
@@ -27,13 +30,29 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
         self.tableView.reloadData()
             
             self.dbUsers = self.database.fetch(User.self)
-            print (self.dbUsers.count)
+
             for user in self.dbUsers {
                 print("fname: ", user.first_name)
-                print("loc: ", user.city)
-                print("gender: ", user.gender)
             }
+            
+        //Get items from corecata
+        fetchUsers()
     }
+        
+        func fetchUsers() {
+            
+            //Fetching data from coredata and displaying in tableview
+            do {
+                self.dbUsers = try context.fetch(User.fetchRequest())
+                
+                DispatchQueue.main.async{
+                    self.tableView.reloadData()
+                }
+            }
+            catch{
+                
+            }
+        }
         
     func viewWillAppear(_ animated: Bool) {
         dbUsers = database.fetch(User.self)
@@ -55,7 +74,7 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     //Returnerer antall brukere i users, som er et array av Results. (100 stk)
     
     func tableView(_ tableView: UITableView, numberOfRowsInSection section: Int) -> Int {
-        return users.count;
+        return dbUsers.count;
     }
     
     //Fyller tableView med ønsket data
@@ -63,14 +82,20 @@ class ViewController: UIViewController, UITableViewDelegate, UITableViewDataSour
     func tableView(_ tableView: UITableView, cellForRowAt indexPath: IndexPath) -> UITableViewCell {
         let cell = tableView.dequeueReusableCell(withIdentifier: "UserTableViewCell", for: indexPath) as! UserTableViewCell
         
-        cell.userName.text = users[indexPath.row].name.first + " " + users[indexPath.row].name.last
+        let user = self.dbUsers[indexPath.row]
+        
+        cell.userName.text = user.first_name
+        
+        /*cell.userName.text = users[indexPath.row].name.first + " " + users[indexPath.row].name.last
         let url = URL(string: users[indexPath.row].picture.thumbnail)!
         getData(from: url) { data, response, error in
         guard let data = data, error == nil else { return }
         DispatchQueue.main.async() { [weak self] in
         cell.userImageView.image = UIImage(data: data)
             }
-        }
+        }*/
+        
+        
         return cell
         
     }

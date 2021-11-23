@@ -46,7 +46,7 @@ struct Result: Decodable {
         user.last_name = name.last
         user.picture_large = picture.large
         user.picture_thumbnail = picture.thumbnail
-        user.age = Int16(dob.age)
+        user.age = Int64(dob.age)
         user.date = dob.date
         user.city = location.city
         user.state =  location.state

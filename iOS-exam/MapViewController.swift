@@ -27,6 +27,7 @@ class MapViewController: UIViewController, MKMapViewDelegate {
         mapView.delegate = self
                     
     }
+    
     func getData(from url: URL, completion: @escaping (Data?, URLResponse?, Error?) -> ()) {
                 URLSession.shared.dataTask(with: url, completionHandler: completion).resume()
         }
